@@ -223,9 +223,7 @@ Ball.prototype.update = function(delta) {
         this.velocity.y += 6;
         this.position.addTo(this.velocity.multiply(delta));
     } else {
-        if (Game.canon.currentColor === sprite.canon_red) this.currentColor = sprite.red_ball;
-        else if (Game.canon.currentColor === sprite.canon_green) this.currentColor = sprite.green_ball;
-        else if (Game.canon.currentColor === sprite.canon_blue) this.currentColor = sprite.blue_ball;
+        this.color = Game.canon.color;
         this.position = Game.canon.ballPosition.subtract(this.center);
     }
     if (painterGameWorld.isOutsideWorld(this.position)) 
@@ -244,23 +242,59 @@ Ball.prototype.reset = function() {
     this.shooting = false;
 }
 
-function PaintCan(positionOffset) {
+function PaintCan(positionOffset,targetColor) {
     this.currentColor = sprite.red_can;
-    this.position = {
-        'x': 0,
-        'y': 0
-    };
-    this.velocity = {
-        'x': 0,
-        'y': 0
-    };
-    this.origin = {
-        'x': 0,
-        'y': 0
-    };
+    this.position = new Vector2(positionOffset,-200);
+    this.velocity = Vector2.zero;
+    this.origin = Vector2.zero;
     this.positionOffset = positionOffset;
+    this.targetColor = targetColor;
     this.reset();
 }
+
+Object.defineProperty(PaintCan.prototype,"width",{
+    get:function(){
+        return this.currentColor.width;
+    }
+});
+
+Object.defineProperty(PaintCan.prototype,"height",{
+    get:function(){
+        return this.currentColor.height;
+    }
+});
+
+Object.defineProperty(PaintCan.prototype,"size",{
+    get:function(){
+        return new Vector2(this.currentColor.width,this.currentColor.height);
+    }
+});
+
+Object.defineProperty(PaintCan.prototype,"center",{
+    get:function(){
+        return new Vector2(this.currentColor.width/2,this.currentColor.height/2);
+    }
+});
+
+Object.defineProperty(PaintCan.prototype,"color",{
+    get:function(){
+        if(this.currentColor === sprite.red_can)
+            return Color.red;
+        else if(this.currentColor === sprite.green_can)
+            return Color.green;
+        else
+            return Color.blue;
+    },
+    set:function(value){
+        if(value === Color.red)
+            this.currentColor = sprite.red_can;
+        else if(value === Color.green)
+            this.currentColor = sprite.green_can;
+        else if(value === Color.blue)
+            this.currentColor = sprite.blue_can;
+    }
+})
+
 
 PaintCan.prototype.reset = function() {
     this.moveToTop();
@@ -268,26 +302,29 @@ PaintCan.prototype.reset = function() {
 }
 
 PaintCan.prototype.moveToTop = function() {
-    this.position = {
-        'x': this.positionOffset,
-        'y': -200
-    };
-    this.velocity = {
-        'x': 0,
-        'y': 0
-    };
+    this.position.y = -200;
+    this.velocity = Vector2.zero;
 }
 
 PaintCan.prototype.update = function(delta) {
-    this.position.x += this.velocity.x * delta;
-    this.position.y += this.velocity.y * delta;
+    this.position = this.position.addTo(this.velocity.multiply(delta));
     if (this.velocity.y === 0 && Math.random() < 0.01) {
         this.velocity = this.calculateRandomVelocity();
-        this.currentColor = this.calculateRandomColor();
+        this.color = this.calculateRandomColor();
     }
 
-    if (painterGameWorld.isOutsideWorld(this.position))
+    var ball = Game.ball;
+    var distance = ball.position.add(ball.center).subtractFrom(this.position).subtractFrom(this.center);
+    if (Math.abs(distance.x) < this.center.x && Math.abs(distance.y) < this.center.y) {
+        this.color = ball.color;
+        ball.reset();
+    }
+
+    if (painterGameWorld.isOutsideWorld(this.position)){
+        if(this.color!== this.targetColor)
+            Game.lives = Game.lives - 1;
         this.moveToTop();
+    }
     this.minVelocity += 0.01;
 }
 
@@ -296,17 +333,17 @@ PaintCan.prototype.draw = function(delta) {
 }
 
 PaintCan.prototype.calculateRandomVelocity = function() {
-    return {
-        'x': 0,
-        'y': Math.random() * 30 + this.minVelocity
-    };
+    return new Vector2(0,Math.random() * 30 + this.minVelocity);
 };
 
 PaintCan.prototype.calculateRandomColor = function() {
     var random = Math.floor(Math.random() * 3);
-    if (random == 0) return sprite.red_can;
-    else if (random == 1) return sprite.green_can;
-    else if (random == 2) return sprite.blue_can;
+    if (random == 0) 
+        return Color.red;
+    else if (random == 1)
+        return Color.green;
+    else if (random == 2) 
+        return Color.blue;
 
 }
 
@@ -355,6 +392,37 @@ Object.defineProperty(Canon.prototype,"height",{
 	}
 });
 
+Object.defineProperty(Canon.prototype,"size",{
+    get:function(){
+        return new Vector2(this.currentColor.width,this.currentColor.height);
+    }
+});
+
+Object.defineProperty(Canon.prototype,"center",{
+    get:function(){
+        return new Vector2(this.currentColor.width/2,this.currentColor.height/2);
+    }
+});
+
+Object.defineProperty(Canon.prototype,"color",{
+    get:function(){
+        if(this.currentColor === sprite.canon_red)
+            return Color.red;
+        else if(this.currentColor === sprite.canon_green)
+            return Color.green;
+        else
+            return Color.blue;
+    },
+    set:function(value){
+        if(value === Color.red)
+            this.currentColor = sprite.canon_red;
+        else if(value === Color.blue)
+            this.currentColor = sprite.canon_blue;
+        else if(value === Color.green)
+            this.currentColor = sprite.canon_green;
+    }
+})
+
 Object.defineProperty(Canon.prototype,"ballPosition",{
 	get:function(){
 		var opposite = Math.sin(this.rotation) * sprite.canon.width * 0.6;
@@ -368,13 +436,21 @@ Canon.prototype.draw = function() {
     Canvas2D.drawImage(this.currentColor, this.colorPosition, 0, this.colorOrigin)
 }
 
+Canon.prototype.reset = function(){
+    this.position = new Vector2(72,405);
+    this.color = Color.red;
+}
+
 Canon.prototype.handleInput = function() {
     var opposite = Mouse.position.y - this.position.y;
     var adjacent = Mouse.position.x - this.position.x;
     this.rotation = Math.atan2(opposite, adjacent);
-    if (Keyboard.keyDown === Keys.R) this.currentColor = sprite.canon_red;
-    else if (Keyboard.keyDown === Keys.G) this.currentColor = sprite.canon_green;
-    else if (Keyboard.keyDown === Keys.B) this.currentColor = sprite.canon_blue;
+    if (Keyboard.keyDown === Keys.R)
+     this.color = Color.red;
+    else if (Keyboard.keyDown === Keys.G) 
+        this.color = Color.green;
+    else if (Keyboard.keyDown === Keys.B)
+         this.color = Color.blue;
 }
 
 var Game = {
@@ -384,9 +460,10 @@ var Game = {
 Game.initialize = function() {
     Game.canon = new Canon();
     Game.ball = new Ball();
-    Game.can1 = new PaintCan(450);
-    Game.can2 = new PaintCan(575);
-    Game.can3 = new PaintCan(700);
+    Game.can1 = new PaintCan(450,Color.red);
+    Game.can2 = new PaintCan(575,Color.green);
+    Game.can3 = new PaintCan(700,Color.blue);
+    Game.lives = 5;
 }
 
 Game.loadAssets = function(imageName) {
@@ -400,6 +477,7 @@ Game.loadAssets = function(imageName) {
 }
 Game.start = function() {
     Canvas2D.initialize('gameCanvas');
+    Game.size = new Vector2(Canvas2D.canvas.width,Canvas2D.canvas.height);
     document.onmousemove = Mouse.handleInput;
     document.onkeydown = Keyboard.handleKeyDown;
     document.onkeyup = Keyboard.handleKeyUp;
@@ -417,6 +495,8 @@ Game.start = function() {
     sprite.red_can = Game.loadAssets(spriteFolder + "spr_can_red.png");
     sprite.green_can = Game.loadAssets(spriteFolder + "spr_can_green.png");
     sprite.blue_can = Game.loadAssets(spriteFolder + "spr_can_blue.png");
+    sprite.lives = Game.loadAssets(spriteFolder+"spr_lives.png");
+    sprite.gameover = Game.loadAssets(spriteFolder + "spr_gameover_click.png");
     Game.assetLoadingLoop();
 
 }
@@ -431,15 +511,33 @@ Game.assetLoadingLoop = function() {
 };
 
 Game.handleInput = function(delta) {
-    Game.ball.handleInput(delta);
-    Game.canon.handleInput();
+    if(Game.lives>0){
+        Game.ball.handleInput(delta);
+        Game.canon.handleInput();
+    }
+    else{
+        if(Mouse.leftButtonPressed)
+            Game.reset();
+    }
+    
 }
 
 Game.update = function(delta) {
+    if(Game.lives<=0)
+        return;
     Game.ball.update(delta);
     Game.can1.update(delta);
     Game.can2.update(delta);
     Game.can3.update(delta);
+}
+
+Game.reset = function(){
+    Game.lives=5;
+    Game.canon.reset();
+    Game.ball.reset();
+    Game.can1.reset();
+    Game.can2.reset();
+    Game.can3.reset();
 }
 
 Game.draw = function() {
@@ -455,6 +553,13 @@ Game.draw = function() {
     Game.can1.draw();
     Game.can2.draw();
     Game.can3.draw();
+    for (var i = 0; i < Game.lives; i++) {
+        Canvas2D.drawImage(sprite.lives, new Vector2(i * sprite.lives.width + 15, 60),0,{x:0,y:0});
+    }
+    if(Game.lives<=0){
+        Canvas2D.drawImage(sprite.gameover,new Vector2(Game.size.x - sprite.gameover.width,
+                Game.size.y - sprite.gameover.height).divideBy(2),0,Vector2.zero);
+    }
 }
 
 Game.mainLoop = function() {
