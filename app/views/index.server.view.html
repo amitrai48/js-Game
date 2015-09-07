@@ -11,7 +11,7 @@
 <body>
     <nav>
         <div class="nav-wrapper teal lighten-2">
-            <a href="#" class="brand-logo">Logo</a>
+            <a href="/" class="brand-logo">@mbush</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a id="instruction" class="waves-effect waves-light modal-trigger" href="#instructionModal">Instructions </a></li>
                 {% if username %}
@@ -37,7 +37,7 @@
                         <p>GL HF. </p>
                     </div>
                     <div class="modal-footer">
-                        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+                        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn">Ok</a>
                     </div>
                 </div>
             </div>
@@ -49,13 +49,22 @@
                 {% endfor %} -->
                 <div class="card high-score-content row hoverable">
                     <span class="card-title grey-text text-darken-2" style="display:block;margin-bottom:15px;">
-				High Scores</span> 
-				{% for score in scores%}
-                <div class="score">
-                    <span> {{score.username}} : {{score.score}}</span>
-                </div>
-                {% endfor %}
-                  
+				High Scores</span>
+                    <div id="score-container">
+                    <ul class="collection">
+                        {% for score in scores%}
+                       <!--  <div class="score">
+                            <span> {{score.username}} : {{score.score}}</span>
+                        </div> -->
+                        
+                        <li class="collection-item avatar">
+                        <i class="circle blue lighten-3" style="font-style:normal">{{score.username | first | upper}}</i>
+                        <span class="title username">{{ score.username | upper }} : </span> <span class="title score">{{score.score}} </span>
+                        </li>
+                       
+                        {% endfor %}
+                         </ul>
+                    </div>
                 </div>
             </div>
         </div>

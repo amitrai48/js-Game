@@ -20,3 +20,20 @@ body {
     padding: 35px 55px 35px;
     overflow: visible;
 }
+
+#score-container .collection .collection-item .username{
+	    width: 60%;
+    display: inline-block;
+}
+
+#score-container .collection .collection-item .score{
+	    width: 35%;
+   		display: inline-block;
+   		text-align:right;
+}
+
+nav .brand-logo{
+padding-left:15px;
+
+}
+

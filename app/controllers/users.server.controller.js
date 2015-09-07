@@ -49,6 +49,18 @@ exports.signout = function(req, res) {
     res.redirect('/');
 };
 
+var getScores = function(callback) {
+    Score.find({}, {}, {
+        sort: {
+            score: -1
+        },
+        skip: 0,
+        limit: 10
+    }, function(err, scores) {
+        callback(err, scores);
+    });
+}
+
 exports.postHighScore = function(req, res) {
     if (req.user) {
         var data = {
@@ -59,26 +71,58 @@ exports.postHighScore = function(req, res) {
         Score.findOne({
             username: data.username
         }, function(err, score) {
-            if (err)
+            if (err) {
                 console.log('Error while posting score');
-            else {
+                return res.status(400).send({
+                    message: 'Some error occured'
+                });
+            } else {
                 console.log(score);
                 if (score) {
                     if (score.score < data.score) {
                         score.score = data.score;
                         score.save(function(err) {
-                            console.log('Error while saving score');
+                            if (err)
+                                return res.status(400).send({
+                                    message: 'Some error occured'
+                                });
+                            getScores(function(err, scores) {
+                                if (err)
+                                    return res.status(400).send({
+                                        message: 'Some error occured'
+                                    });
+                                res.json(scores);
+                            });
+                        });
+                    } else {
+                        getScores(function(err, scores) {
+                            if (err)
+                                return res.status(400).send({
+                                    message: 'Some error occured'
+                                });
+                            res.json(scores);
                         });
                     }
+
+                    //make a query to fetch all the scores here
                 } else {
                     var scoreSave = new Score(data);
                     scoreSave.save(function(err) {
                         if (err)
-                            console.log('Error while posting score');
+                            return res.status(400).send({
+                                message: 'Some error occured'
+                            });
+
+                        getScores(function(err, scores) {
+                            if (err)
+                                return res.status(400).send({
+                                    message: 'Some error occured'
+                                });
+                            res.json(scores);
+                        });
                     });
                 }
             }
-             return res.redirect('/');
         });
     }
 }

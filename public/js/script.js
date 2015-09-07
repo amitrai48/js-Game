@@ -479,6 +479,7 @@ Game.initialize = function() {
     Game.lives = 5;
     Game.score = 0;
     Game.ispaused = false;
+    Game.submitScore = false;
 }
 
 Game.loadAssets = function(imageName) {
@@ -496,11 +497,11 @@ Game.pause = function() {
 Game.start = function() {
     Canvas2D.initialize('gameCanvas');
     Game.size = new Vector2(Canvas2D.canvas.width, Canvas2D.canvas.height);
-    document.onmousemove = Mouse.handleInput;
     document.onkeydown = Keyboard.handleKeyDown;
     document.onkeyup = Keyboard.handleKeyUp;
-    document.onmousedown = Mouse.mouseDown;
-    document.onmouseup = Mouse.mouseUp;
+    $("#gameCanvas").on('mousemove',Mouse.handleInput);
+    $("#gameCanvas").on('mousedown',Mouse.mouseDown);
+    $("#gameCanvas").on('mouseup',Mouse.mouseUp);
     var spriteFolder = "../images/";
     sprite.background = Game.loadAssets(spriteFolder + "spr_background.jpg");
     sprite.canon = Game.loadAssets(spriteFolder + "spr_cannon_barrel.png");
@@ -538,17 +539,6 @@ Game.handleInput = function(delta) {
 
     } else {
         if (Mouse.leftButtonPressed) {
-            var form = document.createElement("form");
-            form.setAttribute("method", "post");
-            form.setAttribute("action", "/users/highscore");
-            var hiddenField = document.createElement("input");
-            hiddenField.setAttribute("type", "hidden");
-            hiddenField.setAttribute("name", "score");
-            hiddenField.setAttribute("value", Game.score);
-            form.appendChild(hiddenField);
-            document.body.appendChild(form);
-            form.submit();
-
             Game.reset();
         }
     }
@@ -556,8 +546,33 @@ Game.handleInput = function(delta) {
 }
 
 Game.update = function(delta) {
-    if (Game.lives <= 0 || Game.isPaused)
+    if (Game.lives <= 0 || Game.isPaused){
+        if(!Game.submitScore){
+            var data={
+                score:Game.score
+            }
+            $.ajax({
+                type:'POST',
+                url:'/users/highscore',
+                data:JSON.stringify(data),
+                contentType:'application/json',
+                dataType:'json',
+                success:function(data){
+                    console.log(data);
+                    $('#score-container .collection .collection-item').remove();
+                    $.each(data,function(key,score){
+                        var elem=' <li class="collection-item avatar">'+
+                        '<i class="circle blue lighten-3" style="font-style:normal">'+score.username.charAt(0).toUpperCase()+'</i>'+
+                        '<span class="title username">'+score.username.toUpperCase()+' :' +'</span> <span class="title score">'+score.score+' </span>'+
+                        '</li>';
+                        $('#score-container .collection').append(elem);
+                    });
+                }
+            });
+            Game.submitScore = true;
+        }
         return;
+    }
     Game.ball.update(delta);
     Game.can1.update(delta);
     Game.can2.update(delta);
@@ -572,6 +587,7 @@ Game.reset = function() {
     Game.lives = 5;
     Game.score = 0;
     Game.isPaused = false;
+    Game.submitScore = false;
     Game.canon.reset();
     Game.ball.reset();
     Game.can1.reset();
