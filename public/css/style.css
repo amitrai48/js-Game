@@ -12,6 +12,10 @@ body {
     background-color: #7294A9;
 }
 
+.high-score-content{
+    min-height:480px;
+}
+
 
 .signin .login-content, .high-score-content , .key-content {
     max-width: 500px;

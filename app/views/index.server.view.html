@@ -49,27 +49,44 @@
                 </div>
                 {% endfor %} -->
                 <div class="card high-score-content row hoverable">
-                    <span class="card-title grey-text text-darken-2" style="display:block;margin-bottom:15px;">
-				High Scores</span>
-                    <div id="score-container">
-                        <ul class="collection">
-                            {% for score in scores%}
-                            <!--  <div class="score">
+                    <!-- <span class="card-title grey-text text-darken-2" style="display:block;margin-bottom:15px;">
+				High Scores</span> -->
+                    <div class="row">
+                        <div class="col s12">
+                            <ul class="tabs">
+                                <li class="tab col s3"><a class="active" href="#score-container">High Scores</a></li>
+                                <li class="tab col s3"><a href="#my-score-container">My Scores</a></li>
+                            </ul>
+                        </div>
+                        <div id="score-container">
+                            <ul class="collection">
+                                {% for score in scores%}
+                                <!--  <div class="score">
                             <span> {{score.username}} : {{score.score}}</span>
                         </div> -->
-                            <li class="collection-item avatar">
-                                <i class="circle blue lighten-3" style="font-style:normal">{{score.username | first | upper}}</i>
-                                <span class="title username">{{ score.username | upper }} : </span> <span class="title score">{{score.score}} </span>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                                <li class="collection-item avatar">
+                                    <i class="circle blue lighten-3" style="font-style:normal">{{score.username | first | upper}}</i>
+                                    <span class="title username">{{ score.username | upper }} : </span> <span class="title score">{{score.score}} </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div id="my-score-container" class="col s12">
+                        	 <ul class="collection">
+                        	 	 <li class="collection-item avatar">
+                                    <i class="circle blue lighten-3" style="font-style:normal">NA</i>
+                                    <span class="title username">Not Implemented Yet!!!</span>
+                                </li>
+                        	 </ul>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row action-btns">
-        	 <button class="btn waves-effect green" id="start-btn" disabled="disabled">Start</button>
-        	 <button class="btn waves-effect green" id="pause-btn">Pause</button>
+            <button class="btn waves-effect green" id="start-btn" disabled="disabled">Start</button>
+            <button class="btn waves-effect green" id="pause-btn">Pause</button>
         </div>
     </div>
     <div class="row">
@@ -119,7 +136,7 @@
                             <button class="btn waves-effect waves-light" id="key-btn-submit">Submit
                                 <i class="material-icons">thumb_up</i>
                             </button>
-                             <button class="btn waves-effect waves-light" id="key-btn-reset">Reset
+                            <button class="btn waves-effect waves-light" id="key-btn-reset">Reset
                                 <i class="material-icons">thumb_down</i>
                             </button>
                         </li>
