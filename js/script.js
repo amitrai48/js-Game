@@ -105,7 +105,8 @@ Vector2.prototype.equals = function (obj) {
 var Color = {
 	green: "#008000",
 	blue: "#0000FF",
-	red: "#FF0000"
+	red: "#FF0000",
+    white: "#FFFFFF"
 };
 
 var Mouse = {
@@ -323,6 +324,8 @@ PaintCan.prototype.update = function(delta) {
     if (painterGameWorld.isOutsideWorld(this.position)){
         if(this.color!== this.targetColor)
             Game.lives = Game.lives - 1;
+        else
+            Game.score = Game.score + 10;
         this.moveToTop();
     }
     this.minVelocity += 0.01;
@@ -364,6 +367,20 @@ Canvas2D.drawImage = function(sprite, position, rotation, origin) {
     Canvas2D.canvasContext.drawImage(sprite, 0, 0, sprite.width, sprite.height, -origin.x, -origin.y, sprite.width, sprite.height);
     Canvas2D.canvasContext.restore();
 };
+
+Canvas2D.drawText = function(text,position,color,fontname,fontsize){
+    fontname = typeof fontname !== 'undefined' ? fontname : "Courier New";
+    fontsize = typeof fontsize !== 'undefined' ? fontsize : "20px";
+
+    Canvas2D.canvasContext.save();
+    Canvas2D.canvasContext.translate(position.x, position.y);
+    Canvas2D.canvasContext.textBaseline = 'top';
+    Canvas2D.canvasContext.font = fontsize + " " + fontname;
+    Canvas2D.canvasContext.fillStyle = color.toString();
+    Canvas2D.canvasContext.fillText(text, 0, 0);
+    Canvas2D.canvasContext.restore();
+}
+
 
 Canvas2D.clear = function() {
     Canvas2D.canvasContext.clearRect(0, 0, Canvas2D.canvas.width, Canvas2D.canvas.height);
@@ -464,6 +481,7 @@ Game.initialize = function() {
     Game.can2 = new PaintCan(575,Color.green);
     Game.can3 = new PaintCan(700,Color.blue);
     Game.lives = 5;
+    Game.score=0;
 }
 
 Game.loadAssets = function(imageName) {
@@ -497,6 +515,7 @@ Game.start = function() {
     sprite.blue_can = Game.loadAssets(spriteFolder + "spr_can_blue.png");
     sprite.lives = Game.loadAssets(spriteFolder+"spr_lives.png");
     sprite.gameover = Game.loadAssets(spriteFolder + "spr_gameover_click.png");
+    sprite.scoreboard = Game.loadAssets(spriteFolder + "spr_scorebar.jpg");
     Game.assetLoadingLoop();
 
 }
@@ -533,6 +552,7 @@ Game.update = function(delta) {
 
 Game.reset = function(){
     Game.lives=5;
+    Game.score=0;
     Game.canon.reset();
     Game.ball.reset();
     Game.can1.reset();
@@ -548,6 +568,14 @@ Game.draw = function() {
         x: 0,
         y: 0
     });
+     Canvas2D.drawImage(sprite.scoreboard, {
+        x: 10,
+        y: 10
+    }, 0, {
+        x: 0,
+        y: 0
+    });
+    Canvas2D.drawText("Score: " + Game.score, new Vector2(20, 22), Color.white);
     Game.ball.draw();
     Game.canon.draw();
     Game.can1.draw();
