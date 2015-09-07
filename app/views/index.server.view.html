@@ -4,6 +4,7 @@
 <head>
     <title>{{title}}</title>
     <link rel="stylesheet" href="./lib/materialize/dist/css/materialize.min.css" media="screen,projection">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -51,20 +52,78 @@
                     <span class="card-title grey-text text-darken-2" style="display:block;margin-bottom:15px;">
 				High Scores</span>
                     <div id="score-container">
-                    <ul class="collection">
-                        {% for score in scores%}
-                       <!--  <div class="score">
+                        <ul class="collection">
+                            {% for score in scores%}
+                            <!--  <div class="score">
                             <span> {{score.username}} : {{score.score}}</span>
                         </div> -->
-                        
-                        <li class="collection-item avatar">
-                        <i class="circle blue lighten-3" style="font-style:normal">{{score.username | first | upper}}</i>
-                        <span class="title username">{{ score.username | upper }} : </span> <span class="title score">{{score.score}} </span>
-                        </li>
-                       
-                        {% endfor %}
-                         </ul>
+                            <li class="collection-item avatar">
+                                <i class="circle blue lighten-3" style="font-style:normal">{{score.username | first | upper}}</i>
+                                <span class="title username">{{ score.username | upper }} : </span> <span class="title score">{{score.score}} </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="row action-btns">
+        	 <button class="btn waves-effect green" id="start-btn" disabled="disabled">Start</button>
+        	 <button class="btn waves-effect green" id="pause-btn">Pause</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="key-bindings col m4 offset-m8">
+            <div class="card key-content row">
+                <span class="card-title grey-text text-darken-2" style="display:block;margin-bottom:15px;">
+				Keys Configuration</span>
+                <div class="content">
+                    <ul class="collection">
+                        <li class="collection-item red-ball-container">
+                            <div>
+                                Red Ball : <span class="red-value">R</span>
+                                <span class="secondary-content"><i class="material-icons cursor" id ="red-ball">input</i></span>
+                            </div>
+                        </li>
+                        <li class="collection-item red-ball-edit">
+                            <div>
+                                Red Ball :
+                                <input type="text" maxlength="1" id="red-ball-text" />
+                            </div>
+                        </li>
+                        <li class="collection-item green-ball-container">
+                            <div>
+                                Green Ball : <span class="green-value">G</span>
+                                <span class="secondary-content"><i class="material-icons cursor" id ="green-ball">input</i></span>
+                            </div>
+                        </li>
+                        <li class="collection-item green-ball-edit">
+                            <div>
+                                Green Ball :
+                                <input type="text" maxlength="1" id="green-ball-text" />
+                            </div>
+                        </li>
+                        <li class="collection-item blue-ball-container">
+                            <div>
+                                Blue Ball :<span class="blue-value">B</span>
+                                <span class="secondary-content"><i class="material-icons cursor" id ="blue-ball">input</i></span>
+                            </div>
+                        </li>
+                        <li class="collection-item blue-ball-edit">
+                            <div>
+                                Blue Ball :
+                                <input type="text" maxlength="1" id="blue-ball-text" />
+                            </div>
+                        </li>
+                        <li class="collection-item">
+                            <button class="btn waves-effect waves-light" id="key-btn-submit">Submit
+                                <i class="material-icons">thumb_up</i>
+                            </button>
+                             <button class="btn waves-effect waves-light" id="key-btn-reset">Reset
+                                <i class="material-icons">thumb_down</i>
+                            </button>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

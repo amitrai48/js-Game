@@ -478,7 +478,7 @@ Game.initialize = function() {
     Game.can3 = new PaintCan(700, Color.blue);
     Game.lives = 5;
     Game.score = 0;
-    Game.ispaused = false;
+    Game.isPaused = true;
     Game.submitScore = false;
 }
 
@@ -499,9 +499,9 @@ Game.start = function() {
     Game.size = new Vector2(Canvas2D.canvas.width, Canvas2D.canvas.height);
     document.onkeydown = Keyboard.handleKeyDown;
     document.onkeyup = Keyboard.handleKeyUp;
-    $("#gameCanvas").on('mousemove',Mouse.handleInput);
-    $("#gameCanvas").on('mousedown',Mouse.mouseDown);
-    $("#gameCanvas").on('mouseup',Mouse.mouseUp);
+    $("#gameCanvas").on('mousemove', Mouse.handleInput);
+    $("#gameCanvas").on('mousedown', Mouse.mouseDown);
+    $("#gameCanvas").on('mouseup', Mouse.mouseUp);
     var spriteFolder = "../images/";
     sprite.background = Game.loadAssets(spriteFolder + "spr_background.jpg");
     sprite.canon = Game.loadAssets(spriteFolder + "spr_cannon_barrel.png");
@@ -526,6 +526,26 @@ Game.assetLoadingLoop = function() {
         window.requestAnimationFrame(Game.assetLoadingLoop);
     } else {
         Game.initialize();
+
+        Canvas2D.drawImage(sprite.background, {
+            x: 0,
+            y: 0
+        }, 0, {
+            x: 0,
+            y: 0
+        });
+        Canvas2D.drawImage(sprite.scoreboard, {
+            x: 10,
+            y: 10
+        }, 0, {
+            x: 0,
+            y: 0
+        });
+        Canvas2D.drawText("Score: " + Game.score, new Vector2(20, 22), Color.white);
+        Game.ball.draw();
+        Game.canon.draw();
+
+        $("#start-btn").prop("disabled", false);
         Game.mainLoop();
     }
 };
@@ -546,25 +566,26 @@ Game.handleInput = function(delta) {
 }
 
 Game.update = function(delta) {
-    if (Game.lives <= 0 || Game.isPaused){
-        if(!Game.submitScore){
-            var data={
-                score:Game.score
+    if (Game.lives <= 0 || Game.isPaused) {
+        if (!Game.submitScore && !Game.isPaused) {
+            var data = {
+                score: Game.score
             }
+            console.log("Called");
             $.ajax({
-                type:'POST',
-                url:'/users/highscore',
-                data:JSON.stringify(data),
-                contentType:'application/json',
-                dataType:'json',
-                success:function(data){
+                type: 'POST',
+                url: '/users/highscore',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function(data) {
                     console.log(data);
                     $('#score-container .collection .collection-item').remove();
-                    $.each(data,function(key,score){
-                        var elem=' <li class="collection-item avatar">'+
-                        '<i class="circle blue lighten-3" style="font-style:normal">'+score.username.charAt(0).toUpperCase()+'</i>'+
-                        '<span class="title username">'+score.username.toUpperCase()+' :' +'</span> <span class="title score">'+score.score+' </span>'+
-                        '</li>';
+                    $.each(data, function(key, score) {
+                        var elem = ' <li class="collection-item avatar">' +
+                            '<i class="circle blue lighten-3" style="font-style:normal">' + score.username.charAt(0).toUpperCase() + '</i>' +
+                            '<span class="title username">' + score.username.toUpperCase() + ' :' + '</span> <span class="title score">' + score.score + ' </span>' +
+                            '</li>';
                         $('#score-container .collection').append(elem);
                     });
                 }
@@ -640,4 +661,65 @@ Game.mainLoop = function() {
 
 document.addEventListener('DOMContentLoaded', function(evt) {
     Game.start();
+});
+
+$("#red-ball").on('click', function() {
+    $(".red-ball-container").hide();
+    $(".red-ball-edit").show();
+});
+
+$("#green-ball").on('click', function() {
+    $(".green-ball-container").hide();
+    $(".green-ball-edit").show();
+});
+
+$("#blue-ball").on('click', function() {
+    $(".blue-ball-container").hide();
+    $(".blue-ball-edit").show();
+});
+
+$("#key-btn-submit").on('click', function() {
+    $(".red-ball-container").show();
+    $(".red-ball-edit").hide();
+    $(".green-ball-container").show();
+    $(".green-ball-edit").hide();
+    $(".blue-ball-container").show();
+    $(".blue-ball-edit").hide();
+    if ($("#red-ball-text").val())
+        Keys.R = $("#red-ball-text").val().toUpperCase().charCodeAt(0);
+    if ($("#green-ball-text").val())
+        Keys.G = $("#green-ball-text").val().toUpperCase().charCodeAt(0);
+    if ($("#blue-ball-text").val())
+        Keys.B = $("#blue-ball-text").val().toUpperCase().charCodeAt(0);
+
+    $('.red-value').text(String.fromCharCode(Keys.R));
+    $('.green-value').text(String.fromCharCode(Keys.G));
+    $('.blue-value').text(String.fromCharCode(Keys.B));
+});
+
+$('#key-btn-reset').on('click', function() {
+    $(".red-ball-container").show();
+    $(".red-ball-edit").hide();
+    $(".green-ball-container").show();
+    $(".green-ball-edit").hide();
+    $(".blue-ball-container").show();
+    $(".blue-ball-edit").hide();
+    Keys.R = 82;
+    Keys.G = 71;
+    Keys.B = 66;
+    $('.red-value').text(String.fromCharCode(Keys.R));
+    $('.green-value').text(String.fromCharCode(Keys.G));
+    $('.blue-value').text(String.fromCharCode(Keys.B));
+});
+
+$("#start-btn").on("click", function() {
+    $("#start-btn").hide();
+    $("#pause-btn").show();
+    Game.isPaused = false;
+});
+
+$("#pause-btn").on("click", function() {
+    $("#pause-btn").hide();
+    $("#start-btn").show();
+     Game.isPaused = true;
 });

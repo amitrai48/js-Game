@@ -55,7 +55,7 @@ var getScores = function(callback) {
             score: -1
         },
         skip: 0,
-        limit: 10
+        limit: 5
     }, function(err, scores) {
         callback(err, scores);
     });
