@@ -1,0 +1,30 @@
+{
+  "name": "games",
+  "version": "0.0.0",
+  "homepage": "https://github.com/amitrai48/js-Game",
+  "authors": [
+    "amitrai48 <amitrai48@gmail.com>"
+  ],
+  "description": "js game",
+  "main": "server.js",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "node",
+    "js",
+    "painter",
+    "game"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "materialize": "~0.97.0"
+  }
+}

@@ -1,0 +1,22 @@
+html,
+body {
+    font-size: 14px;
+}
+
+.main-content , .instructions{
+	padding-top:10px !important;
+}
+
+#gameCanvas {
+    display: block;
+    background-color: #7294A9;
+}
+
+
+.signin .login-content, .high-score-content {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 35px 55px 35px;
+    overflow: visible;
+}

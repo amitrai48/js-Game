@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="./lib/materialize/dist/css/materialize.min.css" media="screen,projection">
+    <link rel="stylesheet" href="./css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper teal lighten-2">
+            <a href="#" class="brand-logo">Logo</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a id="instruction" class="waves-effect waves-light modal-trigger" href="#instructionModal">Instructions </a></li>
+                {% if username %}
+                <li>Hi {{username}}</li>
+                <li><a class="waves-effect waves-light" href="/signout">Signout</a></li>
+                {% else %}
+                <li><a class="waves-effect waves-light" href="/signup">Signup</a></li>
+                <li><a class="waves-effect waves-light" href="/signin">Signin</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div>
+        <div class="row">
+            <div class="main-content col m8" id="gameArea">
+                <canvas id="gameCanvas" width="800" height="480"></canvas>
+                <div id="instructionModal" class="modal">
+                    <div class="modal-content">
+                        <h4>Instructions</h4>
+                        <p>Press 'R' to shoot red color balls , 'B' for Blue Balls and 'G' for green.</p>
+                        <p> For every correct colored can dropping at bottom you get a 10 point.</p>
+                        <p> For every wrong colored can dropping at bottom you lose a life</p>
+                        <p>GL HF. </p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+                    </div>
+                </div>
+            </div>
+            <div class="instructions col m4">
+                <!-- <h1> High Scores </h1> {% for score in scores%}
+                <div class="score">
+                    <span> {{score.username}} : {{score.score}}</span>
+                </div>
+                {% endfor %} -->
+                <div class="card high-score-content row hoverable">
+                    <span class="card-title grey-text text-darken-2" style="display:block;margin-bottom:15px;">
+				High Scores</span> 
+				{% for score in scores%}
+                <div class="score">
+                    <span> {{score.username}} : {{score.score}}</span>
+                </div>
+                {% endfor %}
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./lib/jquery/dist/jquery.min.js"></script>
+    <script src="./lib/materialize/dist/js/materialize.min.js"></script>
+    <script src="./js/script.js">
+    </script>
+    <script>
+    $('#instruction').on('click', function() {
+        Game.pause();
+        $('#instructionModal').openModal({
+            complete: function() {
+                Game.restart();
+            }
+        });
+    });
+    </script>
+</body>
+
+</html>
