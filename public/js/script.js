@@ -723,3 +723,15 @@ $("#pause-btn").on("click", function() {
     $("#start-btn").show();
      Game.isPaused = true;
 });
+
+$("#red-select-btn").on("click",function(){
+    Keyboard.keyDown = Keys.R;
+});
+
+$("#green-select-btn").on("click",function(){
+     Keyboard.keyDown = Keys.G;
+});
+
+$("#blue-select-btn").on("click",function(){
+    Keyboard.keyDown = Keys.B;
+});
