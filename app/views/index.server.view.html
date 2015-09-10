@@ -17,7 +17,7 @@
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a id="instruction" class="waves-effect waves-light modal-trigger" href="#instructionModal">Instructions </a></li>
                 {% if username %}
-                <li>Hi {{username}}</li>
+                <li><a class="waves-effect waves-light">Hi {{username}}</a></li>
                 <li><a class="waves-effect waves-light" href="/signout">Signout</a></li>
                 {% else %}
                 <li><a class="waves-effect waves-light" href="/signup">Signup</a></li>
@@ -27,7 +27,7 @@
             <ul id="mobile-demo" class="side-nav">
                 <li><a id="instruction1" class="waves-effect waves-light modal-trigger" href="#instructionModal">Instructions </a></li>
                 {% if username %}
-                <li>Hi {{username}}</li>
+               <li><a class="waves-effect waves-light">Hi {{username}}</a></li>
                 <li><a class="waves-effect waves-light" href="/signout">Signout</a></li>
                 {% else %}
                 <li><a class="waves-effect waves-light" href="/signup">Signup</a></li>
