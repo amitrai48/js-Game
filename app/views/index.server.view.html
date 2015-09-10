@@ -29,6 +29,14 @@
         <div class="row">
             <div class="main-content col m8" id="gameArea">
                 <canvas id="gameCanvas" width="800" height="480"></canvas>
+                <div class="action-btns">
+                     <button class="btn waves-effect green" id="start-btn" disabled="disabled">Start</button>
+                     <button class="btn waves-effect green" id="pause-btn">Pause</button>
+                     <button class="btn waves-effect red" id="red-select-btn">Red</button>
+                     <button class="btn waves-effect green" id="green-select-btn">Green</button>
+                     <button class="btn waves-effect blue" id="blue-select-btn">Blue</button>
+                        
+                </div>
                 <div id="instructionModal" class="modal">
                     <div class="modal-content">
                         <h4>Instructions</h4>
@@ -85,8 +93,7 @@
             </div>
         </div>
         <div class="row action-btns">
-            <button class="btn waves-effect green" id="start-btn" disabled="disabled">Start</button>
-            <button class="btn waves-effect green" id="pause-btn">Pause</button>
+           
         </div>
     </div>
     <div class="row">
